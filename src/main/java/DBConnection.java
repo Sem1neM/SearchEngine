@@ -9,8 +9,6 @@ public class DBConnection {
     private final static String dbName = "search_engine";
     private final static String dbUser = "root";
     private final static String dbPass = "cnjldflwfnbvbkkbvtnhjdsq";
-    private static StringBuilder insertQuery = new StringBuilder();
-    private static final SimpleDateFormat birthDayFormat = new SimpleDateFormat("yyyy.MM.dd");
 
     public static Connection getConnection() {
 
@@ -18,18 +16,16 @@ public class DBConnection {
             try {
                 String url = "jdbc:mysql://localhost:3306/" + dbName;
                 connection = DriverManager.getConnection(url, dbUser, dbPass);
-                connection.createStatement().execute("DROP TABLE IF EXISTS voter_count");
-                connection.createStatement().execute("CREATE TABLE voter_count(" +
-                        //"id INT NOT NULL AUTO_INCREMENT, " +
-                        "name VARCHAR(200), " +
-                        "birthDate DATE NOT NULL, " +
-                        "count INT NOT NULL, " +
-                        "PRIMARY KEY (name))");
+                connection.createStatement().execute("DROP TABLE IF EXISTS page");
+                connection.createStatement().execute("CREATE TABLE page(" +
+                        "id INT NOT NULL AUTO_INCREMENT, " +
+                        "path TEXT NOT NULL, " +
+                        "code INT NOT NULL, " +
+                        "content MEDIUMTEXT NOT NULL ");
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
         return connection;
     }
-
 }

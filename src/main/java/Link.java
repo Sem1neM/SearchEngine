@@ -6,6 +6,11 @@ public class Link {
     private volatile int depth;
     private volatile CopyOnWriteArraySet<Link> children;
 
+    private volatile String code;
+
+    private volatile String htmlFile;
+
+
     public Link(String url) {
         this.url = url;
         children = new CopyOnWriteArraySet<>();
@@ -46,6 +51,22 @@ public class Link {
             this.children.add(link);
             link.setParent(this);
         }
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getHtmlFile() {
+        return htmlFile;
+    }
+
+    public void setHtmlFile(String htmlFile) {
+        this.htmlFile = htmlFile;
     }
 }
 

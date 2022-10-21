@@ -42,6 +42,19 @@ public class LinkRecursiveTask extends RecursiveAction {
             e.printStackTrace();
         }
         for (Link link : url.getChildren()) {
+            try{
+                link.setHtmlFile(Jsoup.connect(link.getUrl()).get().html());
+                String InboxJson=Jsoup.connect(link.getUrl())
+                        .timeout(1000000)
+                        .header("Accept", "text/javascript")
+                        .userAgent("Mozilla/5.0 (Windows NT 6.1; rv:40.0) Gecko/20100101 Firefox/40.0")
+                        .get()
+                        .body()
+                        .text();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
             LinkRecursiveTask task = new LinkRecursiveTask(link, rootUrl);
             task.fork();
             taskList.add(task);
