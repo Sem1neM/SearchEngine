@@ -6,8 +6,7 @@ public class Link {
     private volatile int depth;
     private volatile CopyOnWriteArraySet<Link> children;
 
-    private volatile String code;
-
+    private volatile int code;
     private volatile String htmlFile;
 
 
@@ -53,11 +52,11 @@ public class Link {
         }
     }
 
-    public String getCode() {
+    public int getCode() {
         return code;
     }
 
-    public void setCode(String code) {
+    public void setCode(int code) {
         this.code = code;
     }
 
