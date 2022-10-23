@@ -47,16 +47,23 @@ public class DBConnection {
     }
 
     public static void builderAppend(Link child){
+
         String path = child.getUrl();
-        String content = child.getHtmlFile();
-        int code = child.getCode();
-        insertQuery.append(insertQuery.isEmpty() ? "" : ",")
-                .append("('")
-                .append(path)
-                .append("', ")
-                .append(code)
-                .append(" , '")
-                .append(content)
-                .append("')");
+        String html = child.getHtmlFile();
+        try {
+            String content = MySQLUtils.mysql_real_escape_string(html);
+            int code = child.getCode();
+            insertQuery.append(insertQuery.isEmpty() ? "" : ",")
+                    .append("('")
+                    .append(path)
+                    .append("', ")
+                    .append(code)
+                    .append(" , '")
+                    .append(content)
+                    .append("')");
+        }
+        catch (Exception e){
+            e.getStackTrace();
+        }
     }
 }
