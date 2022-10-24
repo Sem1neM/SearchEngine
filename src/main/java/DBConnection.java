@@ -29,11 +29,9 @@ public class DBConnection {
     }
 
     public static void linkCounter(Link node) throws SQLException{
-        builderAppend(node);
-        node.getChildren().forEach(child ->
-        {
+        for (Link child : node.getChildren()){
             builderAppend(child);
-        });
+        }
         executeMultiInsert();
     }
 

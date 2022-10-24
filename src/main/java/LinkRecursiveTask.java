@@ -41,15 +41,15 @@ public class LinkRecursiveTask extends RecursiveAction {
             e.printStackTrace();
         }
         for (Link link : url.getChildren()) {
+            LinkRecursiveTask task = new LinkRecursiveTask(link, rootUrl);
+            task.fork();
+            taskList.add(task);
             try{
                 linkParse(link);
             }
             catch (Exception e) {
                 e.printStackTrace();
             }
-            LinkRecursiveTask task = new LinkRecursiveTask(link, rootUrl);
-            task.fork();
-            taskList.add(task);
         }
         for (LinkRecursiveTask task : taskList) {
             task.join();

@@ -11,6 +11,8 @@ public class Link {
 
 
     public Link(String url) {
+        code = 0;
+        htmlFile = null;
         this.url = url;
         children = new CopyOnWriteArraySet<>();
         depth = 0;
