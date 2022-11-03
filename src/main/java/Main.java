@@ -8,7 +8,7 @@ public class Main {
         new ForkJoinPool().invoke(new LinkRecursiveTask(rootUrl, rootUrl));
         DBConnection.getConnection();
         try {
-            DBConnection.linkCounter(rootUrl);
+            DBConnection.linkCounter(rootUrl,rootUrl);
         }
         catch (SQLException e){
             e.printStackTrace();

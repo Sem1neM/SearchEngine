@@ -28,9 +28,9 @@ public class DBConnection {
         return connection;
     }
 
-    public static void linkCounter(Link node) throws SQLException{
+    public static void linkCounter(Link node, Link rootLink) throws SQLException{
         for (Link child : node.getChildren()){
-            builderAppend(child);
+            builderAppend(child, rootLink);
         }
         executeMultiInsert();
     }
@@ -44,9 +44,10 @@ public class DBConnection {
         insertQuery = new StringBuilder();
     }
 
-    public static void builderAppend(Link child){
+    public static void builderAppend(Link child, Link rootLink){
 
-        String path = child.getUrl();
+        String root = rootLink.getUrl().substring(0, rootLink.getUrl().length()-1);
+        String path = child.getUrl().replace(root, "");
         String html = child.getHtmlFile();
         try {
             String content = MySQLUtils.mysql_real_escape_string(html);

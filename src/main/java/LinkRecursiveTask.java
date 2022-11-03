@@ -27,8 +27,12 @@ public class LinkRecursiveTask extends RecursiveAction {
         try {
             sleep(500);
             linkParse(url);
-            Connection connection = Jsoup.connect(url.getUrl()).timeout(100000);
-            Document doc = connection.get();
+            Connection connection = Jsoup.connect(url.getUrl())
+                    .timeout(1000000);
+            Document doc = connection
+                    .userAgent("OurSearchBot")
+                    .referrer("http://www.google.com")
+                    .get();
             Elements links = doc.select("a[href]");
             for (Element link : links) {
                 String absUrl = link.attr("abs:href");
@@ -67,7 +71,7 @@ public class LinkRecursiveTask extends RecursiveAction {
         Connection.Response inboxJson = Jsoup.connect(link.getUrl())
                 .timeout(1000000)
                 .header("Accept", "text/javascript")
-                .userAgent("Mozilla/5.0 (Windows NT 6.1; rv:40.0) Gecko/20100101 Firefox/40.0")
+                .userAgent("OurSearchBot")
                 .execute();
         int statusCode = inboxJson.statusCode();
         link.setCode(statusCode);
