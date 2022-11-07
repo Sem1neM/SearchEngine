@@ -49,8 +49,7 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- Зависимости лемматизатора -->
-
+		<!--        зависимости библиотек лемматизаторов-->
 		<dependency>
 			<groupId>org.apache.lucene.morphology</groupId>
 			<artifactId>morph</artifactId>

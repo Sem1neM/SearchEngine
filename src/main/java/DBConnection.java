@@ -16,11 +16,29 @@ public class DBConnection {
                 String url = "jdbc:mysql://localhost:3306/" + dbName + "?useSSL=false";
                 connection = DriverManager.getConnection(url, dbUser, dbPass);
                 connection.createStatement().execute("DROP TABLE IF EXISTS page");
+                connection.createStatement().execute("DROP TABLE IF EXISTS field");
+                connection.createStatement().execute("DROP TABLE IF EXISTS lemma");
+                connection.createStatement().execute("DROP TABLE IF EXISTS page_index");
                 connection.createStatement().execute("CREATE TABLE page(" +
                         "id INT NOT NULL primary key AUTO_INCREMENT, " +
                         "path TEXT NOT NULL, " +
                         "code INT NOT NULL, " +
                         "content MEDIUMTEXT NOT NULL )");
+                connection.createStatement().execute("CREATE TABLE field(" +
+                        "id INT NOT NULL primary key AUTO_INCREMENT, " +
+                        "name VARCHAR(255) NOT NULL, " +
+                        "selector VARCHAR(255) NOT NULL, " +
+                        "weight FLOAT NOT NULL)");
+                connection.createStatement().execute("CREATE TABLE lemma(" +
+                        "id INT NOT NULL primary key AUTO_INCREMENT, " +
+                        "lemma VARCHAR(255) NOT NULL, " +
+                        "frequency INT NOT NULL)");
+                connection.createStatement().execute("CREATE TABLE page_index(" +
+                        "id INT NOT NULL primary key AUTO_INCREMENT, " +
+                        "page_id INT NOT NULL, " +
+                        "lemma_id INT NOT NULL, " +
+                        "page_rank FLOAT NOT NULL)");
+
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -3,7 +3,10 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.RecursiveAction;
@@ -11,6 +14,7 @@ import java.util.concurrent.RecursiveAction;
 import static java.lang.Thread.sleep;
 
 public class LinkRecursiveTask extends RecursiveAction {
+    private static List<Field> fieldList = new ArrayList<>();
     private Link url;
     private Link rootUrl;
     private static CopyOnWriteArraySet<String> allLinks = new CopyOnWriteArraySet<>();
@@ -75,5 +79,6 @@ public class LinkRecursiveTask extends RecursiveAction {
                 .execute();
         int statusCode = inboxJson.statusCode();
         link.setCode(statusCode);
+        Jsoup.parse(link.getUrl()).getAllElements();
     }
 }
