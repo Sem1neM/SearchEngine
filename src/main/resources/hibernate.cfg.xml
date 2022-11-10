@@ -5,7 +5,7 @@
 <!-- Version 8 MySQL hiberante-cfg.xml example for Hibernate 5 -->
 <hibernate-configuration>
     <session-factory>
-        <property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+        <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
         <!-- property name="connection.driver_class">com.mysql.jdbc.Driver</property -->
         <property name="connection.url">jdbc:mysql://localhost/search_engine?useSSL=false</property>
         <property name="dialect">org.hibernate.dialect.MySQL8Dialect</property>
@@ -17,6 +17,12 @@
         <property name="show_sql">true</property>
         <property name="format_sql">true</property>
         <property name="hbm2ddl.auto">create</property>
+
         <!-- mapping class="com.mcnz.jpa.examples.Player" / -->
+
+        <mapping class="models.Field"></mapping>
+        <mapping class="models.Page"></mapping>
+        <mapping class="models.Lemma"></mapping>
+        <mapping class="models.Index"></mapping>
     </session-factory>
 </hibernate-configuration>

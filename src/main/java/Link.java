@@ -1,4 +1,6 @@
+
 import java.util.concurrent.CopyOnWriteArraySet;
+
 
 public class Link {
     private String url;

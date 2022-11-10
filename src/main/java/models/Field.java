@@ -1,4 +1,13 @@
+package models;
+
+import javax.persistence.*;
+
+@Entity
+@Table(name = "field")
 public class Field {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
     private String name;
     private String selector;
     private float weight;
@@ -7,6 +16,10 @@ public class Field {
         this.name = name;
         this.selector = selector;
         this.weight = weight;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getName() {
