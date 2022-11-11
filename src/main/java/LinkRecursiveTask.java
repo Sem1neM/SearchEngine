@@ -1,21 +1,18 @@
-import models.Field;
+import org.hibernate.Session;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.RecursiveAction;
 
 import static java.lang.Thread.sleep;
 
 public class LinkRecursiveTask extends RecursiveAction {
-    private static List<Field> fieldList = new ArrayList<>();
+
+    private Session session =  HibernateSessionFactoryUtils.getSessionFactory().openSession();
     private Link url;
     private Link rootUrl;
     private static CopyOnWriteArraySet<String> allLinks = new CopyOnWriteArraySet<>();
@@ -55,6 +52,8 @@ public class LinkRecursiveTask extends RecursiveAction {
             taskList.add(task);
             try{
                 linkParse(link);
+                fieldParse(link, "body");
+                fieldParse(link, "title");
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -81,5 +80,14 @@ public class LinkRecursiveTask extends RecursiveAction {
         int statusCode = inboxJson.statusCode();
         link.setCode(statusCode);
         Jsoup.parse(link.getUrl()).getAllElements();
+
+    }
+
+    private Map<String, Integer> fieldParse(Link link, String element) throws Exception {
+        LemmaFinder lemmaFinder = LemmaFinder.getInstance();
+        Connection connection = Jsoup.connect(link.getUrl());
+        Document document = connection.get();
+        Elements elements = document.select(element);
+        return lemmaFinder.collectLemmas(Jsoup.parse(String.valueOf(elements)).text());
     }
 }
