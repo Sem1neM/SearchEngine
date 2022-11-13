@@ -4,6 +4,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import java.net.Inet4Address;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.RecursiveAction;
@@ -52,8 +54,8 @@ public class LinkRecursiveTask extends RecursiveAction {
             taskList.add(task);
             try{
                 linkParse(link);
-                fieldParse(link, "body");
-                fieldParse(link, "title");
+                 link.setBodyMap(fieldParse(link, "body"));
+                 link.setTitleMap(fieldParse(link, "title"));
             }
             catch (Exception e) {
                 e.printStackTrace();

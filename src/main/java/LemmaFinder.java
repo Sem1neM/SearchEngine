@@ -40,7 +40,7 @@ public class LemmaFinder {
             String normalWord = normalForms.get(0);
 
             if (lemmas.containsKey(normalWord)) {
-                lemmas.put(normalWord, lemmas.get(normalWord) + 1);
+                lemmas.replace(normalWord, lemmas.get(normalWord) + 1);
             } else {
                 lemmas.put(normalWord, 1);
             }

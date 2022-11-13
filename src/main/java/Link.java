@@ -1,4 +1,5 @@
 
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 
@@ -7,6 +8,9 @@ public class Link {
     private volatile Link parent;
     private volatile int depth;
     private volatile CopyOnWriteArraySet<Link> children;
+
+    private volatile Map<String,Integer> bodyMap;
+    private volatile Map<String, Integer> titleMap;
 
     private volatile int code;
     private volatile String htmlFile;
@@ -70,6 +74,22 @@ public class Link {
 
     public void setHtmlFile(String htmlFile) {
         this.htmlFile = htmlFile;
+    }
+
+    public Map<String, Integer> getBodyMap() {
+        return bodyMap;
+    }
+
+    public void setBodyMap(Map<String, Integer> bodyMap) {
+        this.bodyMap = bodyMap;
+    }
+
+    public Map<String, Integer> getTitleMap() {
+        return titleMap;
+    }
+
+    public void setTitleMap(Map<String, Integer> titleMap) {
+        this.titleMap = titleMap;
     }
 }
 
