@@ -1,4 +1,9 @@
 
+import models.Lemma;
+import models.Page;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -8,9 +13,10 @@ public class Link {
     private volatile Link parent;
     private volatile int depth;
     private volatile CopyOnWriteArraySet<Link> children;
-
     private volatile Map<String,Integer> bodyMap;
     private volatile Map<String, Integer> titleMap;
+    private volatile List<Lemma> lemmaList = new ArrayList<>();
+    private volatile Page page;
 
     private volatile int code;
     private volatile String htmlFile;
@@ -24,6 +30,17 @@ public class Link {
         depth = 0;
         parent = null;
 
+    }
+    public void addLemma(Lemma lemma){
+        lemmaList.add(lemma);
+    }
+
+    public List<Lemma> getLemmaList() {
+        return lemmaList;
+    }
+
+    public void setLemmaList(List<Lemma> lemmaList) {
+        this.lemmaList = lemmaList;
     }
 
     private void setParent(Link link) {
@@ -90,6 +107,14 @@ public class Link {
 
     public void setTitleMap(Map<String, Integer> titleMap) {
         this.titleMap = titleMap;
+    }
+
+    public Page getPage() {
+        return page;
+    }
+
+    public void setPage(Page page) {
+        this.page = page;
     }
 }
 

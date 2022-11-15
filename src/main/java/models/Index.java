@@ -3,20 +3,23 @@ package models;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "index")
+@Table(name = "index_page")
 public class Index {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(name = "page_id")
-    private int page_id;
-    @Column(name = "lemma_id")
-    private int lemma_id;
+    @JoinColumn(name = "page_id")
+    @OneToOne
+    private Page pageId;
+    @JoinColumn(name = "lemma_id")
+    @OneToOne
+    private Lemma lemmaId;
+    @Column(name = "page_rank")
     private float rank;
 
-    public Index(int page_id, int lemma_id, float rank) {
-        this.page_id = page_id;
-        this.lemma_id = lemma_id;
+    public Index(Page pageId, Lemma lemmaId, float rank) {
+        this.pageId = pageId;
+        this.lemmaId = lemmaId;
         this.rank = rank;
     }
 
@@ -24,20 +27,20 @@ public class Index {
         return id;
     }
 
-    public int getPage_id() {
-        return page_id;
+    public Page getPageId() {
+        return pageId;
     }
 
-    public void setPage_id(int page_id) {
-        this.page_id = page_id;
+    public void setPageId(Page pageId) {
+        this.pageId = pageId;
     }
 
-    public int getLemma_id() {
-        return lemma_id;
+    public Lemma getLemmaId() {
+        return lemmaId;
     }
 
-    public void setLemma_id(int lemma_id) {
-        this.lemma_id = lemma_id;
+    public void setLemmaId(Lemma lemmaId) {
+        this.lemmaId = lemmaId;
     }
 
     public float getRank() {
