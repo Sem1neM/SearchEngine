@@ -20,9 +20,9 @@
 
         <!-- mapping class="com.mcnz.jpa.examples.Player" / -->
 
-        <mapping class="models.Field"></mapping>
-        <mapping class="models.Page"></mapping>
-        <mapping class="models.Lemma"></mapping>
-        <mapping class="models.Index"></mapping>
+        <mapping class="searchengine.models.Field"></mapping>
+        <mapping class="searchengine.models.Page"></mapping>
+        <mapping class="searchengine.models.Lemma"></mapping>
+        <mapping class="searchengine.models.Index"></mapping>
     </session-factory>
 </hibernate-configuration>
