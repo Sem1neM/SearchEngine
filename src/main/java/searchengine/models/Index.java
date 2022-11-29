@@ -8,11 +8,11 @@ public class Index {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-//    @JoinColumn(name = "page_id")
     @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "page_id")
     private Page pageId;
-//    @JoinColumn(name = "lemma_id")
     @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "lemma_id")
     private Lemma lemmaId;
     @Column(name = "page_rank")
     private float rank;

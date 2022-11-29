@@ -1,6 +1,5 @@
 package searchengine.config;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
+import org.jsoup.HttpStatusException;
 import searchengine.models.Index;
 import searchengine.models.Lemma;
 import searchengine.models.Page;
@@ -21,43 +20,35 @@ public class LinkRecursiveTask extends RecursiveAction {
     private final Link url;
     private final Link rootUrl;
     private final static CopyOnWriteArraySet<String> allLinks = new CopyOnWriteArraySet<>();
+    private final HashMap<String, Lemma> allLemmas;
     private final LemmaFinder lemmaFinder = LemmaFinder.getInstance();
-    private final Map<String, Lemma> allLemmas = new HashMap<>();
-    private List<Lemma> lemmas = new ArrayList<>();
     private Map<String, Integer> bodyMap = new HashMap<>();
     private Map<String, Integer> titleMap = new HashMap<>();
+    private Page page;
 
 
-    public LinkRecursiveTask(Link url, Link rootUrl) throws IOException{
+    public LinkRecursiveTask(Link url, Link rootUrl, HashMap<String, Lemma> lemmas) throws IOException{
         this.url = url;
         this.rootUrl = rootUrl;
+        this.allLemmas = lemmas;
     }
     @Override
     protected void compute() {
         Set<LinkRecursiveTask> taskList = new HashSet<>();
         try {
-            sleep(500);
+            sleep(5000);
             Connection connection = Jsoup.connect(url.getUrl())
-                    .timeout(1000000)
+                    .timeout(100000)
                     .header("Accept", "text/javascript")
-                    .userAgent("OurSearchBot");
-            Document doc = connection
                     .userAgent("OurSearchBot")
-                    .referrer("http://www.google.com")
+                    .referrer("http://www.yandex.ru");
+            Document doc = connection
                     .get();
-            Session session = HibernateSessionFactoryUtils.getSessionFactory().openSession();
-            Transaction transaction = session.beginTransaction();
             int statusCode = connection.response().statusCode();
-            Page page = pageParse(doc, statusCode, url.getUrl());
-//            DBModel.savePage(page);
-            titleMap = getLemmaMap(doc, "title");
-            bodyMap = getLemmaMap(doc, "body");
-            lemmas = createLemmas(titleMap, bodyMap);
-            getIndices(page,bodyMap,titleMap,lemmas).forEach(session::persist);
-            transaction.commit();
-
-//            DBModel.saveLemmas(lemmas);
-//            DBModel.saveIndices(getIndices(page, bodyMap, titleMap, lemmas));
+                page = pageParse(doc, statusCode, url.getUrl());
+                bodyMap = getLemmaMap(doc,"body");
+                titleMap = getLemmaMap(doc, "title");
+                DBModel.saveIndices(getIndices(createLemmas()));
 
             Elements links = doc.select("a[href]");
             for (Element link : links) {
@@ -68,7 +59,7 @@ public class LinkRecursiveTask extends RecursiveAction {
                 }
             }
             for (Link link : url.getChildren()) {
-                LinkRecursiveTask task = new LinkRecursiveTask(link, rootUrl);
+                LinkRecursiveTask task = new LinkRecursiveTask(link, rootUrl, allLemmas);
                 task.fork();
                 taskList.add(task);
             }
@@ -77,9 +68,17 @@ public class LinkRecursiveTask extends RecursiveAction {
             }
         }
         catch(IOException | InterruptedException e){
-            e.printStackTrace();
+            assert e instanceof HttpStatusException;
+            HttpStatusException exception = (HttpStatusException) e;
+                String path = getPath(exception.getUrl());
+                int code = exception.getStatusCode();
+                e.printStackTrace();
+                DBModel.savePage(new Page(path, code, ""));
+            }
+
+
+
         }
-    }
 
     private boolean isCorrected(String url) {
         return (!url.isEmpty() && url.startsWith(rootUrl.getUrl())
@@ -88,38 +87,46 @@ public class LinkRecursiveTask extends RecursiveAction {
     }
 
     private Page pageParse(Document document, int code, String url) throws IOException {
-        String root = rootUrl.getUrl().substring(0, rootUrl.getUrl().length()-1);
-        String path = url.replace(root, "");
+        String path = getPath(url);
         String html = document.html();
         String content = MySQLUtils.mysql_real_escape_string(html);
         return new Page(path, code, content);
     }
 
-    private Map<String, Integer> getLemmaMap(Document document, String element){
-        Elements elements = document.select(element);
-        return lemmaFinder.collectLemmas(Jsoup.parse(String.valueOf(elements)).text());
+    private String getPath(String url){
+        String root = rootUrl.getUrl().substring(0, rootUrl.getUrl().length()-1);
+        return url.replace(root, "");
     }
 
-    private List<Index> getIndices(Page page, Map<String, Integer> bodyMap, Map<String, Integer> titleMap, List<Lemma> lemmas){
+
+    private Map<String, Integer> getLemmaMap(Document document, String element){
+        Elements elements = document.select(element);
+        return lemmaFinder.collectLemmas(Jsoup.parse(String.valueOf(elements)).html());
+    }
+
+    private  List<Index> getIndices(List<Lemma> lemmas){
         List<Index> indices = new ArrayList<>();
         bodyMap.forEach((s, integer) -> {
-            Lemma lemma = lemmas.stream().filter(lem -> lem.getLemma().equals(s)).findFirst().get();
-            float rank;
-            rank = (float) 0.8 * integer;
-            rank = titleMap.containsValue(s)? rank + titleMap.get(s): rank;
-            indices.add(new Index(page, lemma, rank));
+            Optional<Lemma> lemmaOptional = lemmas.stream().filter(lem -> lem.getLemma().equals(s)).findFirst();
+            if (lemmaOptional.isPresent()){
+                Lemma lemma = lemmaOptional.get();
+                float rank;
+                rank = (float) 0.8 * integer;
+                rank = titleMap.containsKey(s) ? rank + titleMap.get(s) : rank;
+                indices.add(new Index(page, lemma, rank));
+            }
         });
         return indices;
     }
 
-    private synchronized List<Lemma> createLemmas(Map<String,Integer> titleMap, Map<String,Integer> bodyMap){
+    private synchronized List<Lemma> createLemmas(){
         List<Lemma> lemmaList = new ArrayList<>();
         bodyMap.putAll(titleMap);
         bodyMap.forEach((s, integer) -> {
             Lemma lemma;
             if (allLemmas.containsKey(s)){
                 lemma = allLemmas.get(s);
-                lemma.setFrequency(+1);
+                lemma.setFrequency(lemma.getFrequency() + 1);
             }
             else {
                 lemma = new Lemma(s, 1);
