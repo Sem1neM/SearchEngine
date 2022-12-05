@@ -1,4 +1,4 @@
-package searchengine.config;
+package searchengine.dto.index;
 
 import searchengine.models.Page;
 import searchengine.models.Lemma;
@@ -10,7 +10,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 
 public class Link {
-    private String url;
+    private final String url;
     private volatile Link parent;
     private volatile int depth;
     private volatile CopyOnWriteArraySet<Link> children;

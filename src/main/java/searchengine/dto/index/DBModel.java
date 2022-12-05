@@ -1,4 +1,4 @@
-package searchengine.config;
+package searchengine.dto.index;
 
 import searchengine.models.Field;
 import searchengine.models.Index;

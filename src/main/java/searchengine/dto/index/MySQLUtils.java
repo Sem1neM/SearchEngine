@@ -1,4 +1,4 @@
-package searchengine.config;
+package searchengine.dto.index;
 
 public class MySQLUtils {
 

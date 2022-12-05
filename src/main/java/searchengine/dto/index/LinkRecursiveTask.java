@@ -1,4 +1,4 @@
-package searchengine.config;
+package searchengine.dto.index;
 import org.jsoup.HttpStatusException;
 import searchengine.models.Index;
 import searchengine.models.Lemma;
@@ -8,6 +8,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -49,6 +50,8 @@ public class LinkRecursiveTask extends RecursiveAction {
                 bodyMap = getLemmaMap(doc,"body");
                 titleMap = getLemmaMap(doc, "title");
                 DBModel.saveIndices(getIndices(createLemmas()));
+                bodyMap.clear();
+                titleMap.clear();
 
             Elements links = doc.select("a[href]");
             for (Element link : links) {
@@ -75,13 +78,11 @@ public class LinkRecursiveTask extends RecursiveAction {
                 e.printStackTrace();
                 DBModel.savePage(new Page(path, code, ""));
             }
-
-
-
         }
 
     private boolean isCorrected(String url) {
         return (!url.isEmpty() && url.startsWith(rootUrl.getUrl())
+                && !url.equals(rootUrl.getUrl()) && !url.equals(rootUrl.getUrl() + "/")
                 && !allLinks.contains(url) && !url.contains("#")
                 && !url.matches("([^\\s]+(\\.(?i)(jpg|png|gif|bmp|pdf))$)"));
     }
@@ -94,8 +95,14 @@ public class LinkRecursiveTask extends RecursiveAction {
     }
 
     private String getPath(String url){
-        String root = rootUrl.getUrl().substring(0, rootUrl.getUrl().length()-1);
-        return url.replace(root, "");
+        if (url.equals(rootUrl.getUrl()) && rootUrl.getUrl().endsWith("/")){
+            String root = rootUrl.getUrl().substring(0, rootUrl.getUrl().length()-1);
+            return url.replace(root, "");
+        }
+        else {
+            url = url.replace(rootUrl.getUrl(), "/");
+            return url;
+        }
     }
 
 
@@ -136,29 +143,4 @@ public class LinkRecursiveTask extends RecursiveAction {
         });
         return lemmaList;
     }
-
-//    private void saveLemma(String url, Document doc){
-//        HashMap<String, Float> ranks = getRankLems(doc);
-//        Set<String> rankKeys = ranks.keySet();
-//        Session session =getSessionFactory().openSession();
-//        Transaction tran = session.beginTransaction();
-//        Page page = new Page().setPath(getPath(url))
-//                .setCode(doc.connection().response().statusCode())
-//                .setContent(doc.toString());
-//        for(String rKey : rankKeys) {
-//            Lemma lemma;
-//            if (listLemma.add(rKey)) {
-//                lemma = new Lemma();
-//                lemma.setLemma(rKey).setFrequency(1);
-//            }
-//            else{
-//                lemma = findLemma(rKey);
-//                lemma.setFrequency(lemma.getFrequency() + 1);
-//            }
-//            Index index=new Index(page,lemma,ranks.get(rKey));
-//            session.persist(index);
-//        }
-//        tran.commit();
-//    }
-
 }

@@ -17,13 +17,7 @@ public class Site {
     @Column(name = "last_error")
     private String lastError;
 
-    public Site(int id, String name, String url, SiteStatus status, Date statusTime, String lastError) {
-        this.id = id;
-        this.name = name;
-        this.url = url;
-        this.status = status;
-        this.statusTime = statusTime;
-        this.lastError = lastError;
+    public Site() {
     }
 
     public int getId() {
