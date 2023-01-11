@@ -1,15 +1,17 @@
 package searchengine.models;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "page")
 public class Page {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     private String path;
     private int code;
+
     @Column(name = "content", length = 16777215, columnDefinition = "mediumtext")
     private String content;
 
@@ -20,6 +22,10 @@ public class Page {
         this.path = path;
         this.code = code;
         this.content = content;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getId() {

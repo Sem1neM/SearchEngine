@@ -1,34 +1,39 @@
 package searchengine.models;
 
 import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
 
+@Embeddable
 public class Key implements Serializable {
     @Column(name = "page_id")
-    private int pageId;
+    private Page pageId;
 
     @Column(name = "lemma_id")
-    private int lemmaId;
+    private Lemma lemmaId;
 
-    public Key(int pageId, int lemmaId) {
+    public Key() {
+    }
+
+    public Key(Page pageId, Lemma lemmaId) {
         this.pageId = pageId;
         this.lemmaId = lemmaId;
     }
 
-    public int getPageId() {
+    public Page getPageId() {
         return pageId;
     }
 
-    public void setPageId(int pageId) {
+    public void setPageId(Page pageId) {
         this.pageId = pageId;
     }
 
-    public int getLemmaId() {
+    public Lemma getLemmaId() {
         return lemmaId;
     }
 
-    public void setLemmaId(int lemmaId) {
+    public void setLemmaId(Lemma lemmaId) {
         this.lemmaId = lemmaId;
 
     }

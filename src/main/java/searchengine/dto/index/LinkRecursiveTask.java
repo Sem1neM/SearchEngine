@@ -8,6 +8,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import searchengine.repositories.IndexRepository;
+import searchengine.repositories.PageRepository;
+import searchengine.repositories.SiteRepository;
 
 import java.io.IOException;
 import java.util.*;
@@ -26,10 +29,16 @@ public class LinkRecursiveTask extends RecursiveAction {
     private Map<String, Integer> bodyMap = new HashMap<>();
     private Map<String, Integer> titleMap = new HashMap<>();
     private Page page;
+    private final IndexRepository indexRepository;
+    private final SiteRepository siteRepository;
+    private final PageRepository pageRepository;
 
 
-    public LinkRecursiveTask(Link url, Link rootUrl, HashMap<String, Lemma> lemmas) throws IOException{
+    public LinkRecursiveTask(Link url, Link rootUrl, HashMap<String, Lemma> lemmas, IndexRepository indexRepository, SiteRepository siteRepository, PageRepository pageRepository) throws IOException{
         this.url = url;
+        this.siteRepository = siteRepository;
+        this.indexRepository = indexRepository;
+        this.pageRepository = pageRepository;
         this.rootUrl = rootUrl;
         this.allLemmas = lemmas;
     }
@@ -49,20 +58,24 @@ public class LinkRecursiveTask extends RecursiveAction {
                 page = pageParse(doc, statusCode, url.getUrl());
                 bodyMap = getLemmaMap(doc,"body");
                 titleMap = getLemmaMap(doc, "title");
-                DBModel.saveIndices(getIndices(createLemmas()));
+                synchronized (indexRepository) {
+                    indexRepository.saveAll(getIndices(createLemmas()));
+                }
                 bodyMap.clear();
                 titleMap.clear();
+                rootUrl.getSite().setStatusTime(new Date());
+                siteRepository.save(rootUrl.getSite());
 
             Elements links = doc.select("a[href]");
             for (Element link : links) {
                 String absUrl = link.attr("abs:href");
                 if (isCorrected(absUrl)) {
-                    url.addChildren(new Link(absUrl));
+                    url.addChildren(new Link(absUrl, rootUrl.getSite()));
                     allLinks.add(absUrl);
                 }
             }
             for (Link link : url.getChildren()) {
-                LinkRecursiveTask task = new LinkRecursiveTask(link, rootUrl, allLemmas);
+                LinkRecursiveTask task = new LinkRecursiveTask(link, rootUrl, allLemmas, indexRepository, siteRepository, pageRepository);
                 task.fork();
                 taskList.add(task);
             }
@@ -76,7 +89,7 @@ public class LinkRecursiveTask extends RecursiveAction {
                 String path = getPath(exception.getUrl());
                 int code = exception.getStatusCode();
                 e.printStackTrace();
-                DBModel.savePage(new Page(path, code, ""));
+                Page error = new Page(path, code, "");
             }
         }
 
@@ -130,15 +143,9 @@ public class LinkRecursiveTask extends RecursiveAction {
         List<Lemma> lemmaList = new ArrayList<>();
         bodyMap.putAll(titleMap);
         bodyMap.forEach((s, integer) -> {
-            Lemma lemma;
-            if (allLemmas.containsKey(s)){
-                lemma = allLemmas.get(s);
-                lemma.setFrequency(lemma.getFrequency() + 1);
-            }
-            else {
-                lemma = new Lemma(s, 1);
-                allLemmas.put(s , lemma);
-            }
+            Lemma lemma = new Lemma();
+            lemma.setLemma(s);
+            lemma.setFrequency(1);
             lemmaList.add(lemma);
         });
         return lemmaList;

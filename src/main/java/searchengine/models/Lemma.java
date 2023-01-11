@@ -1,15 +1,20 @@
 package searchengine.models;
 
+import org.hibernate.annotations.SQLInsert;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "lemma")
+@SQLInsert(sql = "insert into lemma (frequency, lemma) values (?, ?) on duplicate key update frequency = frequency + 1")
 public class Lemma implements Comparable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @Column(unique = true)
     private String lemma;
     private int frequency;
+
 
     public Lemma() {
     }
@@ -17,6 +22,10 @@ public class Lemma implements Comparable {
     public Lemma(String lemma, int frequency) {
         this.lemma = lemma;
         this.frequency = frequency;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getId() {

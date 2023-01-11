@@ -4,20 +4,21 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "Site")
-public class Site {
+@Table(name = "site")
+public class SiteEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
     private String url;
+    @Enumerated(EnumType.STRING)
     private SiteStatus status;
     @Column(name = "status_time")
     private Date statusTime;
     @Column(name = "last_error")
     private String lastError;
 
-    public Site() {
+    public SiteEntity() {
     }
 
     public int getId() {

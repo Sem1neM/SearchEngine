@@ -2,6 +2,7 @@ package searchengine.dto.index;
 
 import searchengine.models.Page;
 import searchengine.models.Lemma;
+import searchengine.models.SiteEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 public class Link {
     private final String url;
+    private final SiteEntity site;
     private volatile Link parent;
     private volatile int depth;
     private volatile CopyOnWriteArraySet<Link> children;
@@ -25,8 +27,9 @@ public class Link {
     private volatile String htmlFile;
 
 
-    public Link(String url) {
+    public Link(String url, SiteEntity site) {
         code = 0;
+        this.site = site;
         htmlFile = null;
         this.url = url;
         children = new CopyOnWriteArraySet<>();
@@ -64,6 +67,9 @@ public class Link {
         return 1 + parent.getDepth();
     }
 
+    public SiteEntity getSite() {
+        return site;
+    }
 
     public CopyOnWriteArraySet<Link> getChildren() {
         return children;

@@ -20,7 +20,8 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
+        globaly_quoted_identifiers: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: true
 
