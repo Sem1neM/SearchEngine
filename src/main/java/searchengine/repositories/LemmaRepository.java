@@ -8,5 +8,7 @@ import java.util.List;
 
 @Repository
 public interface LemmaRepository extends JpaRepository<Lemma, Integer> {
-//    public List<Lemma> findAllByOrderByFrequencyDesk();
+    public List<Lemma> findAllByOrderByFrequency();
+
+    Lemma findByLemma(String lemma);
 }

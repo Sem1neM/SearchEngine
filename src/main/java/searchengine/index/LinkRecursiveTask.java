@@ -1,4 +1,4 @@
-package searchengine.dto.index;
+package searchengine.index;
 import org.jsoup.HttpStatusException;
 import searchengine.models.Index;
 import searchengine.models.Lemma;
@@ -90,6 +90,10 @@ public class LinkRecursiveTask extends RecursiveAction {
                 int code = exception.getStatusCode();
                 e.printStackTrace();
                 Page error = new Page(path, code, "");
+                pageRepository.save(error);
+                rootUrl.getSite().setStatusTime(new Date());
+                rootUrl.getSite().setLastError(Integer.toString(code));
+                siteRepository.save(rootUrl.getSite());
             }
         }
 

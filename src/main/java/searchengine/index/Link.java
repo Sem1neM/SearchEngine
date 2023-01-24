@@ -1,4 +1,4 @@
-package searchengine.dto.index;
+package searchengine.index;
 
 import searchengine.models.Page;
 import searchengine.models.Lemma;

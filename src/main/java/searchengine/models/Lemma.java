@@ -51,6 +51,6 @@ public class Lemma implements Comparable {
     @Override
     public int compareTo(Object o) {
         Lemma lemma = (Lemma) o;
-        return this.lemma.equals(lemma.lemma)? 0 : 1;
+        return Integer.compare(getFrequency(), lemma.getFrequency());
     }
 }

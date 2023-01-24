@@ -6,4 +6,5 @@ import searchengine.models.Index;
 
 @Repository
 public interface IndexRepository extends JpaRepository<Index, Integer> {
+    Index findByLemmaId(int id);
 }

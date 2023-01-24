@@ -3,8 +3,8 @@ package searchengine.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import searchengine.dto.index.Link;
-import searchengine.dto.index.LinkRecursiveTask;
+import searchengine.index.Link;
+import searchengine.index.LinkRecursiveTask;
 import searchengine.config.Site;
 import searchengine.config.SitesList;
 import searchengine.models.Field;
@@ -12,6 +12,7 @@ import searchengine.models.Lemma;
 import searchengine.models.SiteEntity;
 import searchengine.models.SiteStatus;
 import searchengine.repositories.*;
+import searchengine.search.SearchSystem;
 
 import java.io.IOException;
 import java.util.*;
@@ -29,9 +30,13 @@ public class IndexService implements IIndexService{
     private final SiteRepository siteRepository;
     private final IndexRepository indexRepository;
     private final FieldRepository fieldRepository;
-    private final LemmaRepository lemmaRepository;
     private final PageRepository pageRepository;
     private final List<Thread> threads;
+
+    @Override
+    public Map<String,String> search(){
+        return null;
+    }
 
     @Override
     public Map<String, String> startIndexing() {

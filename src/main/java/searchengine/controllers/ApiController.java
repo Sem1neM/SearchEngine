@@ -36,4 +36,8 @@ public class ApiController {
         return (HashMap<String, String>) indexService.stopIndexing();
     }
 
+    @GetMapping("/search")
+    public HashMap<String, String> search(){return (HashMap<String, String>) indexService.search();}
+
+
 }
