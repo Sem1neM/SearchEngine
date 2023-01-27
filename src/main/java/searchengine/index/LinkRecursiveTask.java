@@ -64,7 +64,7 @@ public class LinkRecursiveTask extends RecursiveAction {
                 bodyMap.clear();
                 titleMap.clear();
                 rootUrl.getSite().setStatusTime(new Date());
-                siteRepository.save(rootUrl.getSite());
+//                siteRepository.save(rootUrl.getSite());
 
             Elements links = doc.select("a[href]");
             for (Element link : links) {
@@ -89,11 +89,11 @@ public class LinkRecursiveTask extends RecursiveAction {
                 String path = getPath(exception.getUrl());
                 int code = exception.getStatusCode();
                 e.printStackTrace();
-                Page error = new Page(path, code, "");
-                pageRepository.save(error);
                 rootUrl.getSite().setStatusTime(new Date());
                 rootUrl.getSite().setLastError(Integer.toString(code));
-                siteRepository.save(rootUrl.getSite());
+                Page error = new Page(path, code, "", url.getSite());
+                pageRepository.save(error);
+//                siteRepository.save(rootUrl.getSite());
             }
         }
 
@@ -108,7 +108,8 @@ public class LinkRecursiveTask extends RecursiveAction {
         String path = getPath(url);
         String html = document.html();
         String content = MySQLUtils.mysql_real_escape_string(html);
-        return new Page(path, code, content);
+        rootUrl.getSite().setStatusTime(new Date());
+        return new Page(path, code, content, rootUrl.getSite());
     }
 
     private String getPath(String url){

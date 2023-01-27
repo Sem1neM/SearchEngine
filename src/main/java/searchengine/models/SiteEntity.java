@@ -2,6 +2,7 @@ package searchengine.models;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "site")
@@ -20,6 +21,7 @@ public class SiteEntity {
 
     public SiteEntity() {
     }
+
 
     public int getId() {
         return id;

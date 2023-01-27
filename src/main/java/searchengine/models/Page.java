@@ -1,7 +1,6 @@
 package searchengine.models;
 
 import javax.persistence.*;
-import java.util.Set;
 
 @Entity
 @Table(name = "page")
@@ -15,13 +14,26 @@ public class Page {
     @Column(name = "content", length = 16777215, columnDefinition = "mediumtext")
     private String content;
 
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "site_id")
+    private SiteEntity siteId;
+
     public Page() {
     }
 
-    public Page(String path, int code, String content) {
+    public Page(String path, int code, String content, SiteEntity siteEntity) {
+        this.siteId = siteEntity;
         this.path = path;
         this.code = code;
         this.content = content;
+    }
+
+    public SiteEntity getSiteId() {
+        return siteId;
+    }
+
+    public void setSiteId(SiteEntity siteId) {
+        this.siteId = siteId;
     }
 
     public void setId(int id) {

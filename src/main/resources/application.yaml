@@ -23,5 +23,5 @@ spring:
         globaly_quoted_identifiers: true
     hibernate:
       ddl-auto: create
-    show-sql: true
+    show-sql: false
 
